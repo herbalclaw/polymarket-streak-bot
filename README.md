@@ -94,6 +94,7 @@ cp .env.example .env
 | `REST_TIMEOUT` | `3` | REST API timeout (seconds) |
 | `TIMEZONE` | `Asia/Jakarta` | Display timezone |
 | `PRIVATE_KEY` | (empty) | Polygon wallet key (live only) |
+| `POLYGONSCAN_API_KEY` | (empty) | [Polygonscan API key](https://polygonscan.com/apis) for on-chain data |
 
 **Resilience settings:**
 
@@ -240,6 +241,7 @@ The bot polls every 1.5s and settles trades within seconds of resolution.
 ├── copytrade_ws.py   — Hybrid WebSocket + REST monitor
 ├── polymarket.py     — REST API client (Gamma + CLOB)
 ├── polymarket_ws.py  — WebSocket client (orderbook)
+├── blockchain.py     — Polygonscan API client (on-chain data)
 ├── trader.py         — Paper/live execution + state
 ├── resilience.py     — Circuit breaker + rate limiter
 ├── logging_config.py — Colorful structured logging

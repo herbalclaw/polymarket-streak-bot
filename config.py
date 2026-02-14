@@ -78,3 +78,11 @@ class Config:
 
     # Logging
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
+
+    # Polygonscan API
+    POLYGONSCAN_API_KEY: str = os.getenv("POLYGONSCAN_API_KEY", "")
+
+    # Delay impact model parameters
+    DELAY_MODEL_BASE_COEF: float = float(os.getenv("DELAY_MODEL_BASE_COEF", "0.8"))
+    DELAY_MODEL_MAX_IMPACT: float = float(os.getenv("DELAY_MODEL_MAX_IMPACT", "10.0"))
+    DELAY_MODEL_BASELINE_SPREAD: float = float(os.getenv("DELAY_MODEL_BASELINE_SPREAD", "0.02"))

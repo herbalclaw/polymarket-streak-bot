@@ -235,9 +235,21 @@ Related Commands:
             # === CHECK IF WE CAN TRADE ===
             can_trade, reason = state.can_trade()
             if not can_trade:
-                log(f"Cannot trade: {reason}")
-                time.sleep(30)
-                continue
+                # Check if it's a bankroll issue (unrecoverable)
+                if "Bankroll too low" in reason or "Max daily loss" in reason:
+                    total_settled = session_wins + session_losses
+                    win_rate = (session_wins / total_settled * 100) if total_settled > 0 else 0
+                    log(f"❌ STOPPING: {reason}")
+                    log(
+                        f"   Session: {session_wins}W/{session_losses}L ({win_rate:.0f}%) "
+                        f"| PnL: ${session_pnl:+.2f} | Final bankroll: ${state.bankroll:.2f}"
+                    )
+                    break  # Exit the main loop
+                else:
+                    # Other reasons (max daily bets) - just wait
+                    log(f"Cannot trade: {reason}")
+                    time.sleep(30)
+                    continue
 
             # === POLL FOR NEW SIGNALS ===
             signals = monitor.poll()

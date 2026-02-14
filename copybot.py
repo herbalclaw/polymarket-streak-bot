@@ -184,6 +184,10 @@ Related Commands:
     copied_markets: set[tuple[str, int]] = set()  # (wallet, market_ts)
     # Track pending trades
     pending: list = []
+    # Session stats
+    session_wins = 0
+    session_losses = 0
+    session_pnl = 0.0
 
     # Show recent trades from copied wallets
     log("Recent BTC 5-min trades from copied wallets:")
@@ -202,13 +206,28 @@ Related Commands:
                 market = client.get_market(trade.timestamp)
                 if market and market.closed and market.outcome:
                     state.settle_trade(trade, market.outcome)
-                    emoji = "✓" if trade.pnl > 0 else "✗"
                     won = trade.direction == market.outcome
-                    fee_info = f" (fee: {trade.fee_pct:.2%})" if won and trade.fee_pct > 0 else ""
+
+                    # Update session stats
+                    if won:
+                        session_wins += 1
+                    else:
+                        session_losses += 1
+                    session_pnl += trade.pnl
+
+                    # Calculate win rate
+                    total_settled = session_wins + session_losses
+                    win_rate = (session_wins / total_settled * 100) if total_settled > 0 else 0
+
+                    emoji = "✓ WIN" if won else "✗ LOSS"
+                    fee_info = f" (fee: {trade.fee_pct:.1%})" if won and trade.fee_pct > 0 else ""
                     log(
-                        f"[{emoji}] Settled: {trade.direction.upper()} @ {trade.execution_price:.3f} "
-                        f"-> {market.outcome.upper()} | PnL: ${trade.pnl:+.2f}{fee_info} "
-                        f"| Bankroll: ${state.bankroll:.2f}"
+                        f"[{emoji}] {trade.direction.upper()} @ {trade.execution_price:.2f} -> {market.outcome.upper()} "
+                        f"| PnL: ${trade.pnl:+.2f}{fee_info}"
+                    )
+                    log(
+                        f"       Session: {session_wins}W/{session_losses}L ({win_rate:.0f}%) "
+                        f"| PnL: ${session_pnl:+.2f} | Bankroll: ${state.bankroll:.2f} | Pending: {len(pending)-1}"
                     )
                     pending.remove(trade)
                     state.save()
@@ -254,7 +273,8 @@ Related Commands:
 
                 # === COPY THE TRADE ===
                 direction = sig.direction.lower()  # "up" or "down"
-                amount = min(bet_amount, state.bankroll * 0.1)
+                # Use configured amount, capped at bankroll (no arbitrary 10% limit)
+                amount = min(bet_amount, state.bankroll)
                 amount = max(Config.MIN_BET, amount)
 
                 # Calculate copy delay (milliseconds since trader's trade)
@@ -265,9 +285,10 @@ Related Commands:
                 # Get current market price for our entry
                 current_price = market.up_price if direction == "up" else market.down_price
 
+                delay_sec = copy_delay_ms / 1000
                 log(
-                    f"[COPY] {sig.trader_name} -> {sig.side} {sig.direction} "
-                    f"@ {sig.price:.2f} | Copying with ${amount:.2f} | Delay: {copy_delay_ms}ms"
+                    f"[COPY] {sig.trader_name}: {sig.direction.upper()} @ {sig.price:.2f} (${sig.usdc_amount:.0f}) "
+                    f"-> Betting ${amount:.2f} | Delay: {delay_sec:.1f}s"
                 )
 
                 trade = trader.place_bet(
@@ -298,14 +319,23 @@ Related Commands:
                 pending.append(trade)
                 state.save()
 
+                # Show current session status
+                total_settled = session_wins + session_losses
+                win_rate = (session_wins / total_settled * 100) if total_settled > 0 else 0
                 log(
-                    f"Daily: {state.daily_bets} bets, PnL: ${state.daily_pnl:+.2f} "
-                    f"| Bankroll: ${state.bankroll:.2f} | Pending: {len(pending)}"
+                    f"       Placed #{len(copied_markets)} | Pending: {len(pending)} "
+                    f"| Session: {session_wins}W/{session_losses}L ({win_rate:.0f}%) ${session_pnl:+.2f}"
                 )
 
             # === HEARTBEAT ===
             if now % 60 < Config.COPY_POLL_INTERVAL:
-                log(f"Watching... Pending: {len(pending)} | Copied: {len(copied_markets)}")
+                total_settled = session_wins + session_losses
+                win_rate = (session_wins / total_settled * 100) if total_settled > 0 else 0
+                stats = f"{session_wins}W/{session_losses}L" if total_settled > 0 else "no trades yet"
+                log(
+                    f"... Pending: {len(pending)} | Copied: {len(copied_markets)} "
+                    f"| {stats} | PnL: ${session_pnl:+.2f} | Bank: ${state.bankroll:.2f}"
+                )
 
             time.sleep(Config.COPY_POLL_INTERVAL)
 

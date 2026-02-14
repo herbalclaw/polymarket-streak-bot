@@ -157,8 +157,6 @@ Examples:
         sys.exit(1)
 
     # === INITIALIZATION ===
-    log.info("init_start", version="v2")
-
     # Initialize resilience components
     api_circuit = CircuitBreaker(name="polymarket_api")
     rate_limiter = RateLimiter()
@@ -175,11 +173,9 @@ Examples:
         "failures": api_circuit._failures,
     })
 
-    # Pre-fetch upcoming markets
-    log.info("prefetch_markets", count=5)
+    # Pre-fetch upcoming markets (silent)
     upcoming = client.get_upcoming_market_timestamps(count=5)
-    prefetched = client.prefetch_markets(upcoming)
-    log.info("prefetch_complete", cached=prefetched, total=len(upcoming))
+    client.prefetch_markets(upcoming)
 
     # Market data cache with optional WebSocket
     market_cache: MarketDataCache | None = None
@@ -188,10 +184,6 @@ Examples:
             market_cache = MarketDataCache(use_websocket=True)
             market_cache.start()
             time.sleep(1)  # Wait for connection
-            if market_cache.ws_connected:
-                log.info("websocket_connected", type="orderbook")
-            else:
-                log.warning("websocket_pending", type="orderbook")
 
             # Register WebSocket health check
             health.register("websocket", lambda: {
@@ -199,7 +191,7 @@ Examples:
                 "stats": market_cache.stats if market_cache else {},
             })
         except Exception as e:
-            log.error("websocket_init_failed", error=str(e))
+            log.warning("websocket_init_failed", error=str(e))
             use_websocket = False
 
     # Fast hybrid monitor (REST polling for activity)
@@ -220,15 +212,17 @@ Examples:
     # Initialize trader
     if paper_mode:
         trader = PaperTrader(market_cache=market_cache)
-        log.info("trader_init", mode="paper")
     else:
         trader = LiveTrader(market_cache=market_cache)
-        log.info("trader_init", mode="LIVE")
 
-    log.info("config", wallets=len(wallets), amount=bet_amount, bankroll=state.bankroll)
-    log.info("timing", poll=poll_interval, timeout=Config.REST_TIMEOUT, websocket=use_websocket)
+    # Startup banner
+    mode_str = "PAPER" if paper_mode else "LIVE"
+    ws_str = "✓" if use_websocket else "✗"
+    log.status_line(f"═══ Copybot v2 ({mode_str}) ═══")
+    log.status_line(f"Amount: ${bet_amount:.2f} | Bankroll: ${state.bankroll:.2f} | Poll: {poll_interval}s | WS: {ws_str}")
+    log.status_line(f"Tracking {len(wallets)} wallet(s)")
     for w in wallets:
-        log.debug("tracking_wallet", wallet=w[:16] + "...")
+        log.status_line(f"  └─ {w[:10]}...{w[-6:]}")
 
     # Track what markets we've already copied
     copied_markets: set[tuple[str, int]] = set()  # (wallet, market_ts)
@@ -238,12 +232,11 @@ Examples:
     session_pnl = 0.0
 
     # Show recent trades from copied wallets
-    log.info("fetching_recent_trades")
     for wallet in wallets:
-        recent = monitor.get_latest_btc_5m_trades(wallet, limit=3)
+        recent = monitor.get_latest_btc_5m_trades(wallet, limit=1)
         for sig in recent:
-            log.debug("recent_trade", trader=sig.trader_name, side=sig.side,
-                     direction=sig.direction, price=sig.price, amount=sig.usdc_amount)
+            log.status_line(f"  Recent: {sig.trader_name} {sig.side} {sig.direction.upper()} @ {sig.price:.2f} (${sig.usdc_amount:.2f})")
+    print()  # Blank line before main loop
 
     # Stats tracking
     last_stats_time = time.time()
@@ -291,6 +284,8 @@ Examples:
                             fee_pct=trade.fee_pct if won else 0,
                             bankroll=state.bankroll,
                             pending=len(pending) - 1,
+                            wins=session_wins,
+                            losses=session_losses,
                         )
                         pending.remove(trade)
                         state.save()
@@ -310,11 +305,9 @@ Examples:
             can_trade, reason = state.can_trade()
             if not can_trade:
                 if "Bankroll too low" in reason or "Max daily loss" in reason:
-                    log.warning("trading_stopped", reason=reason, wins=session_wins,
-                               losses=session_losses, pnl=session_pnl, bankroll=state.bankroll)
+                    log.warning("trading_stopped", reason=reason)
                     break
                 else:
-                    log.debug("trading_paused", reason=reason)
                     time.sleep(30)
                     continue
 
@@ -424,13 +417,19 @@ Examples:
                 pending.append(trade)
                 state.save()
 
-                log.info("trade_placed", trade_num=len(copied_markets), pending=len(pending),
-                        wins=session_wins, losses=session_losses, pnl=session_pnl)
+                log.trade_placed(
+                    trade_num=len(copied_markets),
+                    pending=len(pending),
+                    wins=session_wins,
+                    losses=session_losses,
+                    pnl=session_pnl,
+                )
 
-            # === HEARTBEAT (every ~30s) ===
-            if time.time() - last_stats_time >= 30:
+            # === HEARTBEAT (every ~60s) ===
+            if time.time() - last_stats_time >= 60:
                 # Calculate unrealized PnL for pending trades
                 unrealized_pnl = 0.0
+                pending_info = []
                 for trade in pending:
                     try:
                         if rate_limiter.allow_request():
@@ -446,24 +445,31 @@ Examples:
                                 net_win = gross_win - fee_on_win
                                 ev = (win_prob * net_win) + ((1 - win_prob) * (-trade.amount))
                                 unrealized_pnl += ev
+
+                                # Track for pending display
+                                implied_winner = "up" if market.up_price > market.down_price else "down"
+                                pending_info.append({
+                                    "direction": trade.direction,
+                                    "current_prob": current_price,
+                                    "likely_win": trade.direction == implied_winner,
+                                })
                     except Exception:
                         pass
 
-                # Structured heartbeat log
+                # Compact heartbeat log
                 log.heartbeat(
                     pending=len(pending),
                     wins=session_wins,
                     losses=session_losses,
                     pnl=session_pnl,
                     bankroll=state.bankroll,
-                    copied=len(copied_markets),
                     unrealized=unrealized_pnl,
-                    polls=polls_since_stats,
-                    poll_latency_ms=monitor.avg_poll_latency_ms,
                     ws_connected=market_cache.ws_connected if market_cache else False,
-                    circuit_state=api_circuit.state.value,
-                    rate_utilization=rate_limiter.current_rate(),
                 )
+
+                # Show pending trades on separate line if any
+                if pending_info:
+                    log.pending_trades(pending_info)
 
                 last_stats_time = time.time()
                 polls_since_stats = 0
@@ -496,22 +502,17 @@ Examples:
                 time.sleep(5)
 
     # Cleanup
-    log.info("shutdown_start")
+    print()  # Blank line
+    log.status_line("═══ Shutdown ═══")
     if market_cache:
         market_cache.stop()
 
     state.save()
-    log.info("shutdown_complete",
-            bankroll=state.bankroll,
-            daily_bets=state.daily_bets,
-            daily_pnl=state.daily_pnl,
-            session_wins=session_wins,
-            session_losses=session_losses,
-            session_pnl=session_pnl)
 
-    # Print final health status
-    health_status = health.get_status()
-    log.health_check(healthy=health_status["healthy"], components=health_status["components"])
+    total = session_wins + session_losses
+    win_rate = (session_wins / total * 100) if total > 0 else 0
+    log.status_line(f"Session: {session_wins}W/{session_losses}L ({win_rate:.0f}%) | PnL: ${session_pnl:+.2f}")
+    log.status_line(f"Final bankroll: ${state.bankroll:.2f}")
 
 
 if __name__ == "__main__":

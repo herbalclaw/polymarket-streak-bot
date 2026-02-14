@@ -344,10 +344,68 @@ Related Commands:
                 total_settled = session_wins + session_losses
                 win_rate = (session_wins / total_settled * 100) if total_settled > 0 else 0
                 stats = f"{session_wins}W/{session_losses}L" if total_settled > 0 else "no trades yet"
+
+                # Calculate unrealized PnL for pending trades
+                unrealized_pnl = 0.0
+                pending_status = []
+                for trade in pending:
+                    try:
+                        market = client.get_market(trade.timestamp)
+                        if market:
+                            # Get current price for our direction
+                            current_price = market.up_price if trade.direction == "up" else market.down_price
+                            exec_price = trade.execution_price if trade.execution_price > 0 else trade.entry_price
+                            shares = trade.amount / exec_price if exec_price > 0 else 0
+
+                            # Calculate expected value
+                            win_prob = current_price
+                            gross_win = shares - trade.amount
+                            fee_on_win = gross_win * trade.fee_pct if gross_win > 0 else 0
+                            net_win = gross_win - fee_on_win
+                            ev = (win_prob * net_win) + ((1 - win_prob) * (-trade.amount))
+                            unrealized_pnl += ev
+
+                            # Determine if winning or losing
+                            implied_winner = "up" if market.up_price > market.down_price else "down"
+                            status_icon = "↑" if trade.direction == implied_winner else "↓"
+                            pending_status.append(f"{trade.direction[0].upper()}{status_icon}{current_price:.0%}")
+                    except Exception:
+                        pass
+
+                # Show heartbeat
                 log(
                     f"... Pending: {len(pending)} | Copied: {len(copied_markets)} "
                     f"| {stats} | PnL: ${session_pnl:+.2f} | Bank: ${state.bankroll:.2f}"
                 )
+                # Show pending trade status if any
+                if pending_status:
+                    log(f"    Pending trades: {', '.join(pending_status)} | Unrealized: ${unrealized_pnl:+.2f}")
+
+                # Show detailed pending status every 5 minutes
+                if now % 300 < Config.COPY_POLL_INTERVAL and pending:
+                    log("    --- Pending Trade Details ---")
+                    for trade in pending:
+                        try:
+                            market = client.get_market(trade.timestamp)
+                            if market:
+                                current_price = market.up_price if trade.direction == "up" else market.down_price
+                                implied_winner = "up" if market.up_price > market.down_price else "down"
+                                likely = "WIN" if trade.direction == implied_winner else "LOSS"
+                                exec_price = trade.execution_price if trade.execution_price > 0 else trade.entry_price
+                                shares = trade.amount / exec_price if exec_price > 0 else 0
+
+                                # Calculate potential outcomes
+                                gross_win = shares - trade.amount
+                                fee_on_win = gross_win * trade.fee_pct if gross_win > 0 else 0
+                                net_win = gross_win - fee_on_win
+
+                                log(
+                                    f"    {trade.direction.upper()} ${trade.amount:.2f} @ {exec_price:.2f} "
+                                    f"| Now: {current_price:.0%} (LIKELY {likely}) "
+                                    f"| If win: ${net_win:+.2f} | If loss: ${-trade.amount:+.2f}"
+                                )
+                        except Exception:
+                            pass
 
             time.sleep(Config.COPY_POLL_INTERVAL)
 

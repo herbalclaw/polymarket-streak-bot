@@ -482,12 +482,13 @@ class PaperTrader:
         # Get copy delay if this is a copytrade
         copy_delay_ms = kwargs.get("copy_delay_ms", 0)
 
-        # Query real fee rate and orderbook for realistic simulation
+        # Use fee rate from market data (already fetched from Gamma API)
+        fee_rate_bps = market.taker_fee_bps if hasattr(market, 'taker_fee_bps') else 1000
+        fee_pct = self._client.calculate_fee(execution_price, fee_rate_bps)
+
+        # Query orderbook for realistic simulation
         if token_id:
             try:
-                # Get fee rate
-                fee_rate_bps = self._client.get_fee_rate(token_id)
-                fee_pct = self._client.calculate_fee(execution_price, fee_rate_bps)
 
                 # Get orderbook for best bid/ask
                 book = self._client.get_orderbook(token_id)

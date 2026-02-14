@@ -24,6 +24,7 @@ class Market:
     down_price: float
     volume: float
     accepting_orders: bool
+    taker_fee_bps: int = 1000  # Default 10% base fee
 
 
 class PolymarketClient:
@@ -73,6 +74,14 @@ class PolymarketClient:
                 elif down_price == 1.0:
                     outcome = "down"
 
+            # Extract fee rate from market data (already in Gamma response)
+            taker_fee_bps = m.get("takerBaseFee")
+            if taker_fee_bps is None:
+                taker_fee_bps = 1000
+                print(f"[polymarket] No takerBaseFee in response for {slug}, using default {taker_fee_bps} bps")
+            else:
+                taker_fee_bps = int(taker_fee_bps)
+
             return Market(
                 timestamp=timestamp,
                 slug=slug,
@@ -85,6 +94,7 @@ class PolymarketClient:
                 down_price=down_price,
                 volume=event.get("volume", 0),
                 accepting_orders=m.get("acceptingOrders", False),
+                taker_fee_bps=taker_fee_bps,
             )
         except Exception as e:
             print(f"[polymarket] Error fetching {slug}: {e}")

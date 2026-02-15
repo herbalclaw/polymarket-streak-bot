@@ -20,7 +20,7 @@ import re
 import signal
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from config import Config, LOCAL_TZ, TIMEZONE_NAME
 from copytrade import CopySignal
@@ -391,8 +391,18 @@ Examples:
                     log.status_line(f"Daily P&L: ${state.daily_pnl:.2f} exceeded -${Config.MAX_DAILY_LOSS:.2f} limit")
                     break
                 elif "Max daily bets" in reason:
-                    log.status_line(f"Daily bet limit reached ({Config.MAX_DAILY_BETS}), waiting for reset...")
-                    time.sleep(30)
+                    # Calculate seconds until midnight in local timezone
+                    now = datetime.now(LOCAL_TZ)
+                    midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
+                    midnight = midnight + timedelta(days=1)
+                    seconds_until_reset = (midnight - now).total_seconds()
+                    hours, remainder = divmod(int(seconds_until_reset), 3600)
+                    minutes = remainder // 60
+                    log.status_line(f"Daily bet limit reached ({Config.MAX_DAILY_BETS}). Sleeping {hours}h {minutes}m until midnight reset...")
+                    time.sleep(seconds_until_reset)
+                    state.daily_bets = 0  # Reset counter after sleep
+                    state.daily_pnl = 0.0
+                    log.status_line("Daily limit reset. Resuming trading...")
                     continue
                 else:
                     time.sleep(30)

@@ -34,7 +34,7 @@ class Config:
     STREAK_TRIGGER: int = int(os.getenv("STREAK_TRIGGER", "4"))
     BET_AMOUNT: float = float(os.getenv("BET_AMOUNT", "5"))
     MIN_BET: float = float(os.getenv("MIN_BET", "1"))
-    MAX_DAILY_BETS: int = int(os.getenv("MAX_DAILY_BETS", "50"))
+    MAX_DAILY_BETS: int = int(os.getenv("MAX_DAILY_BETS", "100"))
     MAX_DAILY_LOSS: float = float(os.getenv("MAX_DAILY_LOSS", "50"))
 
     # Timing

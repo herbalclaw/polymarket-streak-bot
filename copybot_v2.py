@@ -14,6 +14,7 @@ Enhanced version with:
 """
 
 import argparse
+import os
 import queue
 import re
 import signal
@@ -135,6 +136,12 @@ Examples:
         "--max-loss", type=float, metavar="USD",
         help=f"Stop after this daily loss (default: {Config.MAX_DAILY_LOSS})"
     )
+    parser.add_argument(
+        "--retry", type=int, metavar="N", default=0,
+        help="Retry N times on bankrupt (resets bankroll each retry)"
+    )
+    # Internal: tracks current retry attempt (for subprocess restarts)
+    parser.add_argument("--_retry_count", type=int, default=0, help=argparse.SUPPRESS)
     args = parser.parse_args()
 
     # Determine trading mode
@@ -648,10 +655,6 @@ Examples:
 
     # Cleanup
     print()  # Blank line
-    if bankrupt:
-        log.status_line("═══ SIMULATION TERMINATED ═══")
-    else:
-        log.status_line("═══ Shutdown ═══")
 
     if market_cache:
         market_cache.stop()
@@ -669,10 +672,48 @@ Examples:
     log.status_line(f"Session: {session_wins}W/{session_losses}L ({win_rate:.0f}%) | PnL: ${session_pnl:+.2f}")
     log.status_line(f"Final bankroll: ${state.bankroll:.2f}")
 
-    # Exit with error code if bankrupt (like a real trading system would)
+    # Handle retry logic
+    current_retry = args._retry_count
+    max_retries = args.retry
+    retries_remaining = max_retries - current_retry
+
+    if bankrupt and retries_remaining > 0:
+        # Retry: restart with fresh bankroll
+        log.status_line("")
+        log.status_line(f"═══ RETRY {current_retry + 1}/{max_retries} ═══")
+        log.status_line(f"Retries remaining: {retries_remaining}")
+        time.sleep(2)
+
+        # Build new command with incremented retry count
+        new_args = sys.argv.copy()
+
+        # Update or add --_retry_count
+        if "--_retry_count" in new_args:
+            idx = new_args.index("--_retry_count")
+            new_args[idx + 1] = str(current_retry + 1)
+        else:
+            new_args.extend(["--_retry_count", str(current_retry + 1)])
+
+        # Force fresh bankroll if specified, otherwise use default
+        initial_bankroll = args.bankroll or Config.BET_AMOUNT * 3
+        if "--bankroll" in new_args:
+            idx = new_args.index("--bankroll")
+            new_args[idx + 1] = str(initial_bankroll)
+        else:
+            new_args.extend(["--bankroll", str(initial_bankroll)])
+
+        # Restart the script
+        os.execv(sys.executable, [sys.executable] + new_args)
+
+    # Final exit
     if bankrupt:
+        log.status_line("═══ SIMULATION TERMINATED ═══")
+        if max_retries > 0:
+            log.status_line(f"All {max_retries} retries exhausted")
         log.status_line("Exit code: 1 (insufficient funds)")
         sys.exit(1)
+    else:
+        log.status_line("═══ Shutdown ═══")
 
 
 if __name__ == "__main__":

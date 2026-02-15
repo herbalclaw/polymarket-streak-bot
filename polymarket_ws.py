@@ -198,12 +198,38 @@ class PolymarketWebSocket:
             time.sleep(0.1)
 
     def stop(self):
-        """Stop WebSocket connection."""
+        """Stop WebSocket connection gracefully."""
         self._running = False
-        if self._loop:
+
+        if self._loop and self._loop.is_running():
+            # Schedule graceful shutdown
+            asyncio.run_coroutine_threadsafe(self._graceful_shutdown(), self._loop)
+            # Give it time to close cleanly
+            time.sleep(0.5)
+            # Now stop the loop
             self._loop.call_soon_threadsafe(self._loop.stop)
+
         if self._thread:
             self._thread.join(timeout=2.0)
+
+    async def _graceful_shutdown(self):
+        """Gracefully close WebSocket and cancel tasks."""
+        # Close WebSocket connection
+        if self._ws:
+            try:
+                await self._ws.close()
+            except Exception:
+                pass
+
+        # Cancel all pending tasks except current
+        tasks = [t for t in asyncio.all_tasks(self._loop)
+                 if t is not asyncio.current_task()]
+        for task in tasks:
+            task.cancel()
+
+        # Wait for tasks to be cancelled
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
 
     def _run_loop(self):
         """Run asyncio event loop in background thread."""
@@ -212,8 +238,20 @@ class PolymarketWebSocket:
         try:
             self._loop.run_until_complete(self._connect_loop())
         except Exception as e:
-            print(f"[ws] Event loop error: {e}")
+            if self._running:  # Only log if not intentionally stopped
+                print(f"[ws] Event loop error: {e}")
         finally:
+            # Clean up any remaining tasks
+            try:
+                pending = asyncio.all_tasks(self._loop)
+                for task in pending:
+                    task.cancel()
+                if pending:
+                    self._loop.run_until_complete(
+                        asyncio.gather(*pending, return_exceptions=True)
+                    )
+            except Exception:
+                pass
             self._loop.close()
 
     async def _connect_loop(self):

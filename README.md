@@ -1,96 +1,157 @@
-# 🎰 Polymarket BTC 5-Min Streak Reversal Bot
+# Polymarket BTC 5-Min Trading Bot
 
-A simple bot that exploits mean reversion in Polymarket's BTC 5-minute up/down prediction markets.
+> 🤖 Built by [Dexter](https://github.com/0xrsydn) — a superintelligent AI coding agent running on [OpenClaw](https://github.com/openclaw/openclaw). Yes, an AI wrote this entire trading bot. No, it doesn't have a Polymarket account (yet). Despite being built by the OpenClaw bot in the first place, the human (me & my friend) still peer-reviewed and take overall system design and architectural choice for this software as we care and want to generate money as much as possible and curious if we could vibecoded our way into profitable money-making machine
 
-## Strategy
+Automated trading bot for Polymarket's BTC 5-minute up/down prediction markets. Supports multiple strategies — from statistical mean reversion to copying profitable wallets in real-time.
 
-Polymarket offers binary markets every 5 minutes: will BTC go up or down? The bot detects **streaks** — consecutive same outcomes — and bets on reversal.
+> ⚠️ **Work in Progress.** This project is under active development. Expect breaking changes, rough edges, and the occasional existential crisis from its AI developer. Use at your own risk. Start with paper trading.
 
-**Why it works:** After 4+ consecutive same outcomes, historical data shows a ~67-73% reversal rate, while the market prices both sides at 50/50 (even odds). That's free edge.
+## Strategies
+
+### 1. Streak Reversal (Mean Reversion)
+
+Detects streaks of consecutive same outcomes (e.g., 4x "Up" in a row) and bets on reversal.
+
+**Why it works:** After 4+ consecutive same outcomes, historical data shows ~67-73% reversal rate while the market prices both sides at ~50/50.
 
 | Streak Length | Reversal Rate | Sample Size |
 |--------------|---------------|-------------|
-| 3 | 57.9% | 121 |
 | 4 | 66.7% | 51 |
 | 5 | 82.4% | 17 |
 
-**Backtest (288 markets, $10 bets):**
-- Trigger=4: 26 bets, 73.1% win rate, +$110 PnL, $10 max drawdown
-- Trigger=5: 7 bets, 100% win rate, +$66 PnL, $0 max drawdown
+```bash
+# Paper trade
+uv run python bot.py --paper
 
-> ⚠️ **Disclaimer:** This is experimental. Only 2 days of historical data exist (markets launched Feb 12, 2026). Past performance ≠ future results. Use at your own risk. Start with paper trading.
+# Backtest
+uv run python scripts/backtest.py
+```
+
+### 2. Copytrade
+
+Monitors profitable wallets on-chain and copies their BTC 5-min trades with ~1.5-2s latency. Uses WebSocket for orderbook data with REST fallback.
+
+```bash
+# Copy a wallet (paper mode)
+uv run python copybot_v2.py --paper --wallets 0x1d0034134e339a309700ff2d34e99fa2d48b0313
+
+# Multiple wallets
+uv run python copybot_v2.py --paper --wallets 0x1d00...,0x5678...
+```
+
+**Finding wallets to copy:**
+1. Go to [Polymarket Leaderboard](https://polymarket.com/leaderboard)
+2. Filter by "Crypto" category
+3. Find traders with consistent BTC 5-min P&L
+4. Grab wallet address from their profile
+
+### 3. Selective Copytrade
+
+Same as copytrade but with quality filters — skips trades with bad execution conditions (high delay, wide spread, low depth, excessive price movement).
+
+```bash
+# Enable selective mode
+uv run python copybot_v2.py --paper --selective --wallets 0x1d00...
+```
 
 ## Quick Start
 
 ```bash
-# Clone and setup
 git clone https://github.com/0xrsydn/polymarket-streak-bot.git
 cd polymarket-streak-bot
 uv sync
 
-# Paper trade (no real money)
 cp .env.example .env
-uv run python bot.py --paper
+# Edit .env with your settings
 
-# Backtest against historical data
-uv run python backtest.py
+# Pick your strategy:
+uv run python bot.py --paper              # Streak reversal
+uv run python copybot_v2.py --paper       # Copytrade
 ```
 
-## Live Trading Setup
+## Live Trading
 
-1. Get a Polygon wallet with USDC
-2. Set your private key in `.env`:
+1. Get a Polygon wallet funded with USDC
+2. Configure `.env`:
    ```
    PRIVATE_KEY=0x_your_key
    PAPER_TRADE=false
    ```
-3. Run: `uv run python bot.py`
+3. Run your chosen strategy without `--paper`
 
 ## Configuration
 
-Edit `.env` to tune:
+All settings live in `.env` (see `.env.example` for the full list):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `STREAK_TRIGGER` | 4 | Bet after N consecutive same outcomes |
-| `BET_AMOUNT` | 5 | USD per bet (min $5 on Polymarket) |
-| `MAX_DAILY_BETS` | 50 | Stop after N bets per day |
-| `MAX_DAILY_LOSS` | 50 | Stop if daily loss exceeds this |
-| `ENTRY_SECONDS_BEFORE` | 30 | Enter N seconds before window opens |
-| `PAPER_TRADE` | true | Set false for live trading |
+| `PAPER_TRADE` | `true` | Paper mode (no real money) |
+| `BET_AMOUNT` | `5` | USD per trade |
+| `MAX_DAILY_BETS` | `50` | Daily bet limit |
+| `MAX_DAILY_LOSS` | `50` | Daily loss limit |
+| `STREAK_TRIGGER` | `4` | Streak length before betting reversal |
+| `COPY_WALLETS` | — | Wallets to copy (comma-separated) |
+| `USE_WEBSOCKET` | `true` | WebSocket for orderbook data |
 
-## Architecture
+## Project Structure
 
 ```
-├── bot.py          — Main loop: monitors markets, detects streaks, places bets
-├── polymarket.py   — Polymarket API client (Gamma + CLOB)
-├── strategy.py     — Streak detection + Kelly criterion sizing
-├── trader.py       — Paper & live order execution + state management
-├── backtest.py     — Backtest against historical data
-├── config.py       — Settings from .env
-└── .env.example    — Template config
+├── bot.py                         # Streak reversal entrypoint
+├── copybot_v2.py                  # Copytrade v2 entrypoint
+├── src/
+│   ├── config.py                  # Settings from .env
+│   ├── strategies/
+│   │   ├── streak.py              # Mean reversion logic
+│   │   ├── copytrade.py           # Wallet monitoring + signals
+│   │   ├── copytrade_ws.py        # WebSocket copytrade monitor
+│   │   └── selective_filter.py    # Trade quality filter
+│   ├── core/
+│   │   ├── polymarket.py          # REST API client (Gamma + CLOB)
+│   │   ├── polymarket_ws.py       # WebSocket client (orderbook)
+│   │   ├── blockchain.py          # Polygonscan API
+│   │   └── trader.py              # Paper & live execution
+│   └── infra/
+│       ├── resilience.py          # Circuit breaker + rate limiter
+│       └── logging_config.py      # Structured logging
+├── scripts/
+│   ├── backtest.py                # Backtest against historical data
+│   └── history.py                 # Trade history CLI + analysis
+├── .env.example
+├── pyproject.toml
+└── flake.nix                      # Nix devshell
+```
+
+## Trade History & Analysis
+
+```bash
+uv run python scripts/history.py --stats      # View statistics
+uv run python scripts/history.py --limit 50   # Last 50 trades
+uv run python scripts/history.py --export csv  # Export to CSV
 ```
 
 ## How It Works
 
-1. **Monitor** — Fetches recent resolved BTC 5-min market outcomes
-2. **Detect** — Checks for streaks (N consecutive up or down)
-3. **Signal** — If streak ≥ trigger, generate bet-against signal
-4. **Time** — Waits until ~30s before next window opens (get 50¢ odds)
-5. **Execute** — Places bet on the reversal side
-6. **Settle** — Tracks outcome, updates bankroll
+**Streak Reversal:**
+1. Fetches recent resolved BTC 5-min outcomes
+2. Detects streaks (N consecutive up/down)
+3. Bets on reversal ~30s before next window opens (50¢ odds)
+4. Settles and tracks bankroll
 
-## Data Collection
+**Copytrade:**
+1. Polls target wallet activity every 1.5s
+2. Detects new BTC 5-min positions
+3. Places matching market order (FOK for guaranteed fill)
+4. Tracks execution quality (delay, spread, slippage)
 
-Historical data used for backtesting is in the sibling `polymarket-research/` directory. To collect fresh data yourself:
+**Selective Filter** adds pre-trade checks:
+- Copy delay < threshold
+- Fill price within acceptable range
+- Spread, depth, and volatility checks
 
-```bash
-# Pull last 24h of resolved markets
-curl -s "https://gamma-api.polymarket.com/events?slug=btc-updown-5m-{UNIX_TIMESTAMP}"
-```
+## Disclaimer
 
-Markets follow the slug pattern `btc-updown-5m-{timestamp}` at 300-second intervals.
+This is experimental software built by an AI agent for research and educational purposes (not really, we want to make money too). Prediction markets involve real financial risk. Past performance does not guarantee future results. The developers (human and artificial) are not responsible for any losses.
 
 ## License
 
-MIT
+No licence, just use it bro, it was vibecoded but probably will licensed as MIT later

@@ -466,11 +466,16 @@ class TradingState:
             self.last_reset_date = today
 
     def can_trade(self) -> tuple[bool, str]:
+        """Check if trading is allowed using config defaults."""
+        return self.can_trade_with_limits(Config.MAX_DAILY_BETS, Config.MAX_DAILY_LOSS)
+
+    def can_trade_with_limits(self, max_daily_bets: int, max_daily_loss: float) -> tuple[bool, str]:
+        """Check if trading is allowed with specified limits."""
         self.reset_daily_if_needed()
-        if self.daily_bets >= Config.MAX_DAILY_BETS:
-            return False, f"Max daily bets reached ({Config.MAX_DAILY_BETS})"
-        if self.daily_pnl <= -Config.MAX_DAILY_LOSS:
-            return False, f"Max daily loss reached (${Config.MAX_DAILY_LOSS})"
+        if self.daily_bets >= max_daily_bets:
+            return False, f"Max daily bets reached ({max_daily_bets})"
+        if self.daily_pnl <= -max_daily_loss:
+            return False, f"Max daily loss reached (${max_daily_loss})"
         if self.bankroll < Config.MIN_BET:
             return False, f"Bankroll too low (${self.bankroll:.2f} < ${Config.MIN_BET:.2f})"
         return True, "OK"

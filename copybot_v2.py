@@ -155,6 +155,8 @@ Examples:
     bet_amount = args.amount or Config.BET_AMOUNT
     poll_interval = args.poll or Config.FAST_POLL_INTERVAL
     use_websocket = Config.USE_WEBSOCKET and not args.no_websocket
+    max_daily_bets = args.max_bets if args.max_bets is not None else Config.MAX_DAILY_BETS
+    max_daily_loss = args.max_loss if args.max_loss is not None else Config.MAX_DAILY_LOSS
 
     # Parse wallets
     wallets = Config.COPY_WALLETS
@@ -256,6 +258,7 @@ Examples:
     ws_str = "✓" if use_websocket else "✗"
     log.status_line(f"═══ Copybot v2 ({mode_str}) ═══")
     log.status_line(f"Amount: ${bet_amount:.2f} | Bankroll: ${state.bankroll:.2f} | Poll: {poll_interval}s | WS: {ws_str}")
+    log.status_line(f"Daily limits: {max_daily_bets} bets | ${max_daily_loss:.0f} max loss")
     log.status_line(f"Tracking {len(wallets)} wallet(s)")
     for w in wallets:
         log.status_line(f"  └─ {w[:10]}...{w[-6:]}")
@@ -374,8 +377,8 @@ Examples:
                 break
 
             # === CHECK IF WE CAN TRADE ===
-            can_trade, reason = state.can_trade()
-            if not can_trade:
+            can_trade_result, reason = state.can_trade_with_limits(max_daily_bets, max_daily_loss)
+            if not can_trade_result:
                 if "Bankroll too low" in reason:
                     log.status_line("")
                     log.status_line("╔════════════════════════════════════════╗")
@@ -389,7 +392,7 @@ Examples:
                     log.status_line("╔════════════════════════════════════════╗")
                     log.status_line("║  SIMULATION ENDED - DAILY LOSS LIMIT   ║")
                     log.status_line("╚════════════════════════════════════════╝")
-                    log.status_line(f"Daily P&L: ${state.daily_pnl:.2f} exceeded -${Config.MAX_DAILY_LOSS:.2f} limit")
+                    log.status_line(f"Daily P&L: ${state.daily_pnl:.2f} exceeded -${max_daily_loss:.2f} limit")
                     break
                 elif "Max daily bets" in reason:
                     # Calculate seconds until midnight in local timezone
@@ -399,8 +402,13 @@ Examples:
                     seconds_until_reset = (midnight - now).total_seconds()
                     hours, remainder = divmod(int(seconds_until_reset), 3600)
                     minutes = remainder // 60
-                    log.status_line(f"Daily bet limit reached ({Config.MAX_DAILY_BETS}). Sleeping {hours}h {minutes}m until midnight reset...")
-                    time.sleep(seconds_until_reset)
+                    log.status_line(f"Daily bet limit reached ({max_daily_bets}). Sleeping {hours}h {minutes}m until midnight reset...")
+                    # Sleep in small chunks to allow Ctrl+C interruption
+                    sleep_start = time.time()
+                    while running and (time.time() - sleep_start) < seconds_until_reset:
+                        time.sleep(1)  # Check running flag every second
+                    if not running:
+                        break  # Exit if shutdown requested during sleep
                     state.daily_bets = 0  # Reset counter after sleep
                     state.daily_pnl = 0.0
                     log.status_line("Daily limit reset. Resuming trading...")

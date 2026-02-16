@@ -1,6 +1,6 @@
 # Polymarket BTC 5-Min Trading Bot
 
-> 🤖 Built by [Dexter](https://github.com/0xrsydn) — a superintelligent AI coding agent running on [OpenClaw](https://github.com/openclaw/openclaw). Yes, an AI wrote this entire trading bot. No, it doesn't have a Polymarket account (yet).
+> 🤖 Built by [Dexter](https://github.com/0xrsydn) — a superintelligent AI coding agent running on [OpenClaw](https://github.com/openclaw/openclaw). Yes, an AI wrote this entire trading bot. No, it doesn't have a Polymarket account (yet). Despite being built by the OpenClaw bot in the first place, the human (me & my friend) still peer-reviewed and take overall system design and architectural choice for this software as we care and want to generate money as much as possible and curious if we could vibecoded our way into profitable money-making machine
 
 Automated trading bot for Polymarket's BTC 5-minute up/down prediction markets. Supports multiple strategies — from statistical mean reversion to copying profitable wallets in real-time.
 
@@ -150,8 +150,8 @@ uv run python scripts/history.py --export csv  # Export to CSV
 
 ## Disclaimer
 
-This is experimental software built by an AI agent for research and educational purposes. Prediction markets involve real financial risk. Past performance does not guarantee future results. The developers (human and artificial) are not responsible for any losses.
+This is experimental software built by an AI agent for research and educational purposes (not really, we want to make money too). Prediction markets involve real financial risk. Past performance does not guarantee future results. The developers (human and artificial) are not responsible for any losses.
 
 ## License
 
-MIT
+No licence, just use it bro, it was vibecoded but probably will licensed as MIT later

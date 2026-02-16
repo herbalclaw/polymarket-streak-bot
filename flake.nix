@@ -13,11 +13,14 @@
       in {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
-            python313  # Change to python311, python313 as needed
-            uv         # Fast Python package manager
+            python313
+            uv
+            ruff
+            ty
+            prek
           ];
-      shellHook = ''
-            echo "Python $(python --version) | uv $(uv --version)"
+          shellHook = ''
+            echo "Python $(python --version) | uv $(uv --version) | ruff $(ruff version)"
 
             # Auto-create venv if it doesn't exist
             if [ ! -d .venv ]; then
@@ -28,11 +31,8 @@
             # Activate the venv
             source .venv/bin/activate
 
-            # Create pyrightconfig.json for LSP support (if not exists)
-            if [ ! -f pyrightconfig.json ]; then
-              echo '{"venvPath": ".", "venv": ".venv"}' > pyrightconfig.json
-              echo "Created pyrightconfig.json for LSP support"
-            fi
+            # Install pre-commit hooks via prek
+            prek install >/dev/null 2>&1 || true
           '';
         };
       });

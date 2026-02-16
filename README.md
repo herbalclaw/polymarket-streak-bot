@@ -155,3 +155,62 @@ This is experimental software built by an AI agent for research and educational 
 ## License
 
 No licence, just use it bro, it was vibecoded but probably will licensed as MIT later
+
+## Running the Bot (Local Only)
+
+### 1. Setup Environment
+```bash
+# On YOUR local machine
+cd polymarket-streak-bot
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. Configure Private Key
+```bash
+# Edit .env file (NEVER commit this)
+nano .env
+```
+
+Add your private key:
+```env
+PRIVATE_KEY=0x_your_actual_private_key_here
+PAPER_TRADE=false
+BET_AMOUNT=5
+MAX_DAILY_BETS=50
+MAX_DAILY_LOSS=50
+STREAK_TRIGGER=4
+```
+
+### 3. Verify .env is Gitignored
+```bash
+git status
+# Should NOT show .env as modified
+```
+
+### 4. Run the Bot
+```bash
+./run_bot.sh
+# Or manually:
+source venv/bin/activate
+python bot.py --live
+```
+
+### 5. Monitor Output
+The bot will show:
+- Current BTC price
+- Streak detection
+- Trade execution
+- P&L updates
+
+## Safety Checks
+
+✅ `.env` is in `.gitignore` - won't be pushed to GitHub  
+✅ Start with small bets ($5)  
+✅ Set daily loss limits  
+✅ Monitor first few trades closely  
+
+## Stopping the Bot
+
+Press `Ctrl+C` to stop gracefully. All state is saved to `trades.json`.

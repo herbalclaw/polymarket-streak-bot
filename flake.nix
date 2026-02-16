@@ -20,16 +20,17 @@
             prek
           ];
           shellHook = ''
-            echo "Python $(python --version) | uv $(uv --version) | ruff $(ruff version)"
-
             # Auto-create venv if it doesn't exist
             if [ ! -d .venv ]; then
               echo "Creating virtual environment..."
               uv venv
             fi
 
-            # Activate the venv
+            # Activate venv for Python deps, then restore Nix tool priority
             source .venv/bin/activate
+            export PATH="${pkgs.lib.makeBinPath (with pkgs; [ ruff ty prek ])}:$PATH"
+
+            echo "Python $(python --version) | uv $(uv --version) | ruff $(ruff version)"
 
             # Install pre-commit hooks via prek
             prek install >/dev/null 2>&1 || true

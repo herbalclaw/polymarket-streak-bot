@@ -27,7 +27,7 @@ except ImportError:
 running = True
 
 
-def handle_signal(sig, frame):
+def handle_signal(sig, _frame):
     global running
     print("\n[copybot] Shutting down gracefully...")
     running = False

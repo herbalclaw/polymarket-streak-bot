@@ -46,7 +46,7 @@ running = True
 log = get_logger("copybot")
 
 
-def handle_signal(sig, frame):
+def handle_signal(sig, _frame):
     global running
     log.info("shutdown_requested", signal=sig)
     running = False

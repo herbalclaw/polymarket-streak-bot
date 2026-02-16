@@ -11,3 +11,10 @@ dependencies = [
     "web3>=7.14.1",
     "websockets>=12.0",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11",
+    "ty>=0.0.1a",
+    "pre-commit>=4.0",
+]

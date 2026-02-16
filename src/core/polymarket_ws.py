@@ -286,7 +286,12 @@ class PolymarketWebSocket:
                     async for message in ws:
                         self.last_message_time = time.time()
                         self.messages_received += 1
-                        await self._handle_message(message)
+                        raw_message = (
+                            message.decode("utf-8", errors="ignore")
+                            if isinstance(message, bytes)
+                            else message
+                        )
+                        await self._handle_message(raw_message)
 
             except ConnectionClosed as e:
                 print(f"[ws] Connection closed: {e}")
@@ -611,7 +616,12 @@ class UserWebSocket:
                     async for message in ws:
                         self.last_message_time = time.time()
                         self.messages_received += 1
-                        await self._handle_message(message)
+                        raw_message = (
+                            message.decode("utf-8", errors="ignore")
+                            if isinstance(message, bytes)
+                            else message
+                        )
+                        await self._handle_message(raw_message)
 
             except ConnectionClosed as e:
                 print(f"[user-ws] Connection closed: {e}")
@@ -840,9 +850,12 @@ class MarketDataCache:
         # Subscribe to WebSocket if available
         if self._ws and self._ws.is_connected():
             # Use slug as condition_id for BTC markets
-            self._ws.subscribe_market(
-                market.slug, [market.up_token_id, market.down_token_id]
-            )
+            token_ids = [
+                token_id
+                for token_id in (market.up_token_id, market.down_token_id)
+                if token_id is not None
+            ]
+            self._ws.subscribe_market(market.slug, token_ids)
 
         return True
 

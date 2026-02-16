@@ -8,6 +8,7 @@ Provides blockchain details for Polygon transactions:
 
 import time
 from dataclasses import dataclass
+from typing import cast
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -97,28 +98,28 @@ class PolygonscanClient:
         try:
             # Fetch transaction details
             tx_data = self._call("proxy", "eth_getTransactionByHash", txhash=tx_hash)
-            if not tx_data or tx_data == "null":
+            if not tx_data:
                 return None
 
             # Fetch transaction receipt for gas used and status
             receipt = self._call("proxy", "eth_getTransactionReceipt", txhash=tx_hash)
-            if not receipt or receipt == "null":
+            if not receipt:
                 return None
 
             # Parse block number (hex to int)
-            block_number = int(tx_data.get("blockNumber", "0x0"), 16)
+            block_number = self._hex_to_int(tx_data.get("blockNumber", "0x0"))
 
             # Parse gas values
-            gas_limit = int(tx_data.get("gas", "0x0"), 16)
-            gas_used = int(receipt.get("gasUsed", "0x0"), 16)
+            gas_limit = self._hex_to_int(tx_data.get("gas", "0x0"))
+            gas_used = self._hex_to_int(receipt.get("gasUsed", "0x0"))
 
             # Gas price in wei -> gwei (1 gwei = 10^9 wei)
-            gas_price_wei = int(tx_data.get("gasPrice", "0x0"), 16)
+            gas_price_wei = self._hex_to_int(tx_data.get("gasPrice", "0x0"))
             gas_price_gwei = gas_price_wei / 1e9
 
             # Effective gas price (for EIP-1559 transactions)
-            effective_gas_price_wei = int(
-                receipt.get("effectiveGasPrice", tx_data.get("gasPrice", "0x0")), 16
+            effective_gas_price_wei = self._hex_to_int(
+                receipt.get("effectiveGasPrice", tx_data.get("gasPrice", "0x0"))
             )
 
             # Calculate tx fee in MATIC (wei -> MATIC = wei / 10^18)
@@ -126,7 +127,7 @@ class PolygonscanClient:
             tx_fee_matic = tx_fee_wei / 1e18
 
             # Transaction status: 0x1 = success, 0x0 = failed
-            status_hex = receipt.get("status", "0x1")
+            status_hex = self._value_as_str(receipt.get("status", "0x1"), "0x1")
             status = "success" if status_hex == "0x1" else "failed"
 
             # Get block timestamp (requires additional API call)
@@ -135,8 +136,8 @@ class PolygonscanClient:
             result = OnChainTxData(
                 tx_hash=tx_hash,
                 block_number=block_number,
-                from_address=tx_data.get("from", ""),
-                to_address=tx_data.get("to", ""),
+                from_address=self._value_as_str(tx_data.get("from", "")),
+                to_address=self._value_as_str(tx_data.get("to", "")),
                 gas_limit=gas_limit,
                 gas_used=gas_used,
                 gas_price_gwei=gas_price_gwei,
@@ -168,14 +169,23 @@ class PolygonscanClient:
             block_data = self._call(
                 "proxy", "eth_getBlockByNumber", tag=block_hex, boolean="false"
             )
-            if block_data and block_data != "null":
+            if block_data:
                 timestamp_hex = block_data.get("timestamp", "0x0")
-                return int(timestamp_hex, 16)
+                return int(cast(str, timestamp_hex), 16)
         except Exception:
             pass
         return int(time.time())
 
-    def _call(self, module: str, action: str, **params) -> dict | str | None:
+    @staticmethod
+    def _value_as_str(value: object, default: str = "") -> str:
+        """Convert an arbitrary API field value to str with a fallback."""
+        return value if isinstance(value, str) else default
+
+    def _hex_to_int(self, value: object, default_hex: str = "0x0") -> int:
+        """Parse a hex string field from API data to int."""
+        return int(self._value_as_str(value, default_hex), 16)
+
+    def _call(self, module: str, action: str, **params) -> dict[str, object] | None:
         """Make API call to Etherscan.
 
         Args:
@@ -184,7 +194,7 @@ class PolygonscanClient:
             **params: Additional parameters
 
         Returns:
-            API result or None on error
+            API result object or None on error
         """
         request_params = {
             "chainid": self.CHAIN_ID,
@@ -209,12 +219,15 @@ class PolygonscanClient:
 
             # Check for error responses
             if data.get("status") == "0" and data.get("message") != "OK":
-                error_msg = data.get("message", "Unknown error")
+                error_msg = self._value_as_str(data.get("message"), "Unknown error")
                 if "rate limit" in error_msg.lower():
                     print(f"[polygonscan] Rate limited: {error_msg}")
                 return None
 
-            return result
+            if not isinstance(result, dict):
+                return None
+
+            return cast(dict[str, object], result)
 
         except requests.exceptions.Timeout:
             return None

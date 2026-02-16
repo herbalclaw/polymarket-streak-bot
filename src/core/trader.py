@@ -5,6 +5,7 @@ import os
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from typing import cast
 
 from src.config import Config, LOCAL_TZ, TIMEZONE_NAME
 from src.core.polymarket import Market
@@ -1425,36 +1426,30 @@ class LiveTrader:
         """Initialize py-clob-client with wallet credentials."""
         try:
             from py_clob_client.client import ClobClient
-            from py_clob_client.clob_types import MarketOrderArgs, OrderArgs, OrderType
-            from py_clob_client.order_builder.constants import BUY, SELL
 
-            # Build client kwargs based on wallet type
-            client_kwargs = {
-                "host": Config.CLOB_API,
-                "key": Config.PRIVATE_KEY,
-                "chain_id": Config.CHAIN_ID,
-            }
-
-            # Add proxy wallet parameters if using Magic/proxy wallet
             if Config.SIGNATURE_TYPE == 1:
-                client_kwargs["signature_type"] = 1
-                client_kwargs["funder"] = Config.FUNDER_ADDRESS
+                if not Config.FUNDER_ADDRESS:
+                    raise ValueError("FUNDER_ADDRESS required when SIGNATURE_TYPE=1")
                 print(
                     f"[trader] Using proxy wallet with funder: {Config.FUNDER_ADDRESS[:10]}..."
                 )
-
-            self.client = ClobClient(**client_kwargs)
+                self.client = ClobClient(
+                    host=Config.CLOB_API,
+                    key=Config.PRIVATE_KEY,
+                    chain_id=Config.CHAIN_ID,
+                    signature_type=1,
+                    funder=Config.FUNDER_ADDRESS,
+                )
+            else:
+                self.client = ClobClient(
+                    host=Config.CLOB_API,
+                    key=Config.PRIVATE_KEY,
+                    chain_id=Config.CHAIN_ID,
+                )
 
             # Derive API credentials
             creds = self.client.create_or_derive_api_creds()
             self.client.set_api_creds(creds)
-
-            # Store order types and constants
-            self.MarketOrderArgs = MarketOrderArgs
-            self.OrderArgs = OrderArgs
-            self.OrderType = OrderType
-            self.BUY = BUY
-            self.SELL = SELL
 
             wallet_type = "proxy" if Config.SIGNATURE_TYPE == 1 else "EOA"
             print(f"[trader] Live trading client initialized ({wallet_type} wallet)")
@@ -1596,18 +1591,26 @@ class LiveTrader:
         fee_pct = PolymarketClient.calculate_fee(entry_price, fee_rate_bps)
 
         try:
+            from py_clob_client.clob_types import MarketOrderArgs, OrderType
+            from py_clob_client.order_builder.constants import BUY
+
+            if not token_id:
+                raise ValueError(f"No token ID for {direction} side")
+
+            fok_order_type = cast(OrderType, OrderType.FOK)
+
             # Create FOK market order
             # For BUY orders, amount is in USD (how much to spend)
-            market_order = self.MarketOrderArgs(
+            market_order = MarketOrderArgs(
                 token_id=token_id,
                 amount=amount,  # USD amount to spend
-                side=self.BUY,
-                order_type=self.OrderType.FOK,  # Fill-Or-Kill for immediate execution
+                side=BUY,
+                order_type=fok_order_type,  # Fill-Or-Kill for immediate execution
             )
 
             # Sign and submit the order
             signed_order = self.client.create_market_order(market_order)
-            response = self.client.post_order(signed_order, self.OrderType.FOK)
+            response = self.client.post_order(signed_order, fok_order_type)
 
             order_id = response.get("orderID", response.get("id", "unknown"))
             order_status = "submitted"

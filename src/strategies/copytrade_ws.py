@@ -141,7 +141,12 @@ class CopytradeWebSocket:
 
                     # Handle messages
                     async for message in ws:
-                        await self._handle_message(message)
+                        raw_message = (
+                            message.decode("utf-8", errors="ignore")
+                            if isinstance(message, bytes)
+                            else message
+                        )
+                        await self._handle_message(raw_message)
 
             except ConnectionClosed as e:
                 print(f"[copytrade-ws] Connection closed: {e}")

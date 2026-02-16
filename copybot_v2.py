@@ -434,7 +434,7 @@ Examples:
     log.status_line(
         f"Amount: ${bet_amount:.2f} | Bankroll: ${state.bankroll:.2f} | Poll: {poll_interval}s | WS: {ws_str}"
     )
-    if selective_enabled:
+    if selective_filter:
         log.status_line(
             f"Selective: ON | delay<={selective_filter.max_delay_ms / 1000:.1f}s | fill={selective_filter.min_fill_price:.2f}-{selective_filter.max_fill_price:.2f}"
         )

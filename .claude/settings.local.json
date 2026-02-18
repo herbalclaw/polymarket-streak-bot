@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(PYTHONIOENCODING=utf-8 python bot.py:*)",
+      "Bash(PYTHONUNBUFFERED=1 PYTHONIOENCODING=utf-8 python:*)"
+    ]
+  }
+}

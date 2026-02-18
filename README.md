@@ -1,5 +1,35 @@
 # Polymarket BTC 5-Min Trading Bot
 
+## 🚀 QUICK START (For Beginners)
+
+**1. Open terminal in the bot folder:**
+```bash
+cd polymarket-streak-bot
+```
+
+**2. Start the virtual environment:**
+```bash
+# Windows:
+venv\Scripts\activate
+
+# Mac/Linux:
+source venv/bin/activate
+```
+
+**3. Run the bot (paper trading first!):**
+```bash
+python bot.py --paper
+```
+
+**4. To trade with real money:**
+- Edit `.env` file and add your private key
+- Set `PAPER_TRADE=false`
+- Run: `python bot.py`
+
+**Stop the bot:** Press `Ctrl+C`
+
+---
+
 > 🤖 Built by [Dexter](https://github.com/0xrsydn) — a superintelligent AI coding agent running on [OpenClaw](https://github.com/openclaw/openclaw). Yes, an AI wrote this entire trading bot. No, it doesn't have a Polymarket account (yet). Despite being built by the OpenClaw bot in the first place, the human (me & my friend) still peer-reviewed and take overall system design and architectural choice for this software as we care and want to generate money as much as possible and curious if we could vibecoded our way into profitable money-making machine
 
 Automated trading bot for Polymarket's BTC 5-minute up/down prediction markets. Supports multiple strategies — from statistical mean reversion to copying profitable wallets in real-time.

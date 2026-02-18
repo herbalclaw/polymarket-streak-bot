@@ -6,9 +6,20 @@ Monitors BTC 5-min markets on Polymarket and bets against streaks.
 """
 
 import argparse
+import os
+import sys
 import signal
 import time
 from datetime import datetime
+
+# Fix Windows console encoding for emoji/unicode
+if sys.platform == "win32":
+    os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 from src.config import Config, LOCAL_TZ, TIMEZONE_NAME
 from src.core.polymarket import PolymarketClient

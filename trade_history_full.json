@@ -1,0 +1,1037 @@
+[
+  {
+    "id": "1771354200_1771354170975_down",
+    "market": {
+      "timestamp": 1771354200,
+      "slug": "btc-updown-5m-1771354200",
+      "window_close": 1771354500,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 4.99,
+      "requested_amount": 4.997,
+      "shares": 9.98
+    },
+    "execution": {
+      "timestamp": 1771354170975,
+      "entry_price": 0.495,
+      "fill_price": 0.5,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": false,
+      "timestamp": 1771354706736,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 0.0,
+      "gross_profit": -4.99,
+      "fee_amount": 0.0,
+      "net_profit": -4.99
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771359300_1771359271055_up",
+    "market": {
+      "timestamp": 1771359300,
+      "slug": "btc-updown-5m-1771359300",
+      "window_close": 1771359600,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "up",
+      "amount": 4.4899992,
+      "requested_amount": 4.498,
+      "shares": 8.80392
+    },
+    "execution": {
+      "timestamp": 1771359271055,
+      "entry_price": 0.505,
+      "fill_price": 0.51,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "down",
+      "won": false,
+      "timestamp": 1771360096184,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 0.0,
+      "gross_profit": -4.4899992,
+      "fee_amount": 0.0,
+      "net_profit": -4.4899992
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771359600_1771359571351_up",
+    "market": {
+      "timestamp": 1771359600,
+      "slug": "btc-updown-5m-1771359600",
+      "window_close": 1771359900,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "up",
+      "amount": 4.4899992,
+      "requested_amount": 4.498,
+      "shares": 8.80392
+    },
+    "execution": {
+      "timestamp": 1771359571351,
+      "entry_price": 0.505,
+      "fill_price": 0.51,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": true,
+      "timestamp": 1771360364984,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 8.80392,
+      "gross_profit": 4.3139208,
+      "fee_amount": 0.107837235198,
+      "net_profit": 4.206083564802
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771364400_1771364370780_up",
+    "market": {
+      "timestamp": 1771364400,
+      "slug": "btc-updown-5m-1771364400",
+      "window_close": 1771364700,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "up",
+      "amount": 3.6599992,
+      "requested_amount": 3.66,
+      "shares": 6.654544
+    },
+    "execution": {
+      "timestamp": 1771364370780,
+      "entry_price": 0.505,
+      "fill_price": 0.55,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": true,
+      "timestamp": 1771364950347,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 6.654544,
+      "gross_profit": 2.9945447999999995,
+      "fee_amount": 0.07485613363799998,
+      "net_profit": 2.9196886663619996
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771364700_1771364671028_up",
+    "market": {
+      "timestamp": 1771364700,
+      "slug": "btc-updown-5m-1771364700",
+      "window_close": 1771365000,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "up",
+      "amount": 4.45999944,
+      "requested_amount": 4.4696084364802,
+      "shares": 8.576922
+    },
+    "execution": {
+      "timestamp": 1771364671028,
+      "entry_price": 0.505,
+      "fill_price": 0.52,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": true,
+      "timestamp": 1771365347854,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 8.576922,
+      "gross_profit": 4.11692256,
+      "fee_amount": 0.1029127716936,
+      "net_profit": 4.0140097883064
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771368000_1771367970834_down",
+    "market": {
+      "timestamp": 1771368000,
+      "slug": "btc-updown-5m-1771368000",
+      "window_close": 1771368300,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 4.9999991999999995,
+      "requested_amount": 5.0,
+      "shares": 9.80392
+    },
+    "execution": {
+      "timestamp": 1771367970834,
+      "entry_price": 0.495,
+      "fill_price": 0.51,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "down",
+      "won": true,
+      "timestamp": 1771368617440,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 9.80392,
+      "gross_profit": 4.8039208,
+      "fee_amount": 0.120086010198,
+      "net_profit": 4.683834789802
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771368300_1771368271137_down",
+    "market": {
+      "timestamp": 1771368300,
+      "slug": "btc-updown-5m-1771368300",
+      "window_close": 1771368600,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 5.04999929,
+      "requested_amount": 5.0,
+      "shares": 10.306121
+    },
+    "execution": {
+      "timestamp": 1771368271137,
+      "entry_price": 0.495,
+      "fill_price": 0.49,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "down",
+      "won": true,
+      "timestamp": 1771368928485,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 10.306121,
+      "gross_profit": 5.2561217099999995,
+      "fee_amount": 0.131389902445725,
+      "net_profit": 5.124731807554275
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771368600_1771368571727_down",
+    "market": {
+      "timestamp": 1771368600,
+      "slug": "btc-updown-5m-1771368600",
+      "window_close": 1771368900,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 5.0,
+      "requested_amount": 5.0,
+      "shares": 10.0
+    },
+    "execution": {
+      "timestamp": 1771368571727,
+      "entry_price": 0.495,
+      "fill_price": 0.5,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": false,
+      "timestamp": 1771369224864,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 0.0,
+      "gross_profit": -5.0,
+      "fee_amount": 0.0,
+      "net_profit": -5.0
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771377000_1771376971796_up",
+    "market": {
+      "timestamp": 1771377000,
+      "slug": "btc-updown-5m-1771377000",
+      "window_close": 1771377300,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "up",
+      "amount": 4.61999909,
+      "requested_amount": 4.62,
+      "shares": 7.573769
+    },
+    "execution": {
+      "timestamp": 1771376971796,
+      "entry_price": 0.505,
+      "fill_price": 0.61,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "down",
+      "won": false,
+      "timestamp": 1771377570876,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 0.0,
+      "gross_profit": -4.61999909,
+      "fee_amount": 0.0,
+      "net_profit": -4.61999909
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771386000_1771385970891_down",
+    "market": {
+      "timestamp": 1771386000,
+      "slug": "btc-updown-5m-1771386000",
+      "window_close": 1771386300,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 4.999999400000001,
+      "requested_amount": 5.0,
+      "shares": 9.090908
+    },
+    "execution": {
+      "timestamp": 1771385970891,
+      "entry_price": 0.495,
+      "fill_price": 0.55,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": false,
+      "timestamp": 1771386587699,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 0.0,
+      "gross_profit": -4.999999400000001,
+      "fee_amount": 0.0,
+      "net_profit": -4.999999400000001
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771386300_1771386271119_down",
+    "market": {
+      "timestamp": 1771386300,
+      "slug": "btc-updown-5m-1771386300",
+      "window_close": 1771386600,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 4.999999320000001,
+      "requested_amount": 5.0,
+      "shares": 9.259258
+    },
+    "execution": {
+      "timestamp": 1771386271119,
+      "entry_price": 0.515,
+      "fill_price": 0.54,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249775,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": false,
+      "timestamp": 1771386919668,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 0.0,
+      "gross_profit": -4.999999320000001,
+      "fee_amount": 0.0,
+      "net_profit": -4.999999320000001
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771386600_1771386570940_down",
+    "market": {
+      "timestamp": 1771386600,
+      "slug": "btc-updown-5m-1771386600",
+      "window_close": 1771386900,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 4.99999916,
+      "requested_amount": 5.0,
+      "shares": 9.615383
+    },
+    "execution": {
+      "timestamp": 1771386570940,
+      "entry_price": 0.495,
+      "fill_price": 0.52,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": false,
+      "timestamp": 1771387215293,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 0.0,
+      "gross_profit": -4.99999916,
+      "fee_amount": 0.0,
+      "net_profit": -4.99999916
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771386900_1771386871551_down",
+    "market": {
+      "timestamp": 1771386900,
+      "slug": "btc-updown-5m-1771386900",
+      "window_close": 1771387200,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 4.679998400000001,
+      "requested_amount": 4.681835092682667,
+      "shares": 8.509088
+    },
+    "execution": {
+      "timestamp": 1771386871551,
+      "entry_price": 0.495,
+      "fill_price": 0.55,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "down",
+      "won": true,
+      "timestamp": 1771387635356,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 8.509088,
+      "gross_profit": 3.8290895999999996,
+      "fee_amount": 0.09571766727599999,
+      "net_profit": 3.733371932724
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771387200_1771387171503_down",
+    "market": {
+      "timestamp": 1771387200,
+      "slug": "btc-updown-5m-1771387200",
+      "window_close": 1771387500,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 4.179999270000001,
+      "requested_amount": 4.181835160682668,
+      "shares": 8.196077
+    },
+    "execution": {
+      "timestamp": 1771387171503,
+      "entry_price": 0.495,
+      "fill_price": 0.51,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "down",
+      "won": true,
+      "timestamp": 1771387924936,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 8.196077,
+      "gross_profit": 4.01607773,
+      "fee_amount": 0.100391903055675,
+      "net_profit": 3.9156858269443253
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  },
+  {
+    "id": "1771387500_1771387471418_down",
+    "market": {
+      "timestamp": 1771387500,
+      "slug": "btc-updown-5m-1771387500",
+      "window_close": 1771387800,
+      "volume": 0.0
+    },
+    "position": {
+      "direction": "down",
+      "amount": 3.68,
+      "requested_amount": 3.6818352446826674,
+      "shares": 7.36
+    },
+    "execution": {
+      "timestamp": 1771387471418,
+      "entry_price": 0.495,
+      "fill_price": 0.5,
+      "spread": 0.0,
+      "slippage_pct": 0.0,
+      "fill_pct": 100.0,
+      "best_bid": 0.0,
+      "best_ask": 0.0,
+      "price_movement_pct": 0.0
+    },
+    "fees": {
+      "rate_bps": 1000,
+      "pct": 0.0249975,
+      "amount": 0.0
+    },
+    "settlement": {
+      "status": "settled",
+      "outcome": "up",
+      "won": false,
+      "timestamp": 1771388402143,
+      "resolution_delay_sec": null,
+      "price_at_close": null,
+      "gross_payout": 0.0,
+      "gross_profit": -3.68,
+      "fee_amount": 0.0,
+      "net_profit": -3.68
+    },
+    "context": {
+      "strategy": "streak",
+      "mode": "live",
+      "market_bias": "neutral"
+    },
+    "session": {
+      "trade_number": 1,
+      "wins_before": 0,
+      "losses_before": 0,
+      "pnl_before": 0.0,
+      "bankroll_before": 0.0,
+      "consecutive_wins": 0,
+      "consecutive_losses": 0
+    },
+    "timing": {
+      "hour_utc": 0,
+      "minute": 0,
+      "day_of_week": 0,
+      "seconds_into_window": 0
+    },
+    "on_chain": {
+      "block_number": null,
+      "gas_used": null,
+      "tx_fee_matic": null,
+      "timestamp": null
+    }
+  }
+]
